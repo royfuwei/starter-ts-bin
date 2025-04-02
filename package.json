@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "description": "",
   "main": "src/index.ts",
-  "private": true,
   "scripts": {
+    "publish:dist": "./publish.sh",
     "clean": "npx npm-run-all --parallel clean:dist clean:types",
     "clean:types": "npx rimraf ./types",
     "clean:dist": "npx rimraf ./dist",
