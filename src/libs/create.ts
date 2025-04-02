@@ -31,5 +31,5 @@ export async function createProject({ name, template }: CreateProjectOptions) {
   execSync('git init', { cwd: targetDir, stdio: 'inherit' });
 
   // 安裝依賴（可選）
-  execSync('npm install', { cwd: targetDir, stdio: 'inherit' });
+  // execSync('npm install', { cwd: targetDir, stdio: 'inherit' });
 }

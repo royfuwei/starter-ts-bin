@@ -14,7 +14,7 @@ type TemplateInfo = {
 };
 
 type Options = {
-  [key: string]: string | undefined;
+  [key: string]: string | number | boolean | undefined;
 };
 
 const getTemplateInfo = () => {
@@ -36,19 +36,21 @@ program
         const res: Options = await inquirer.prompt([
           { type: 'input', name: 'name', message: '請輸入專案名稱' },
         ]);
-        name = res.name;
+        name = res.name ? String(res.name) : undefined;
       }
       if (!name) {
         console.error('❌ 專案名稱無效');
         process.exit(1);
       }
 
-      let template: string | undefined = options?.template;
+      let template: string | undefined = options?.template
+        ? String(options.template)
+        : undefined;
       if (!template) {
         const res: Options = await inquirer.prompt([
           { type: 'input', name: 'template', message: '請輸入模板 (如 user/repo)' },
         ]);
-        template = res.template;
+        template = res.template ? String(res.template) : undefined;
       }
       if (!template) {
         const res: Options = await inquirer.prompt([
@@ -62,7 +64,7 @@ program
             })),
           },
         ]);
-        template = res.template;
+        template = res.template ? String(res.template) : undefined;
       }
       if (!template) {
         console.error('❌ 模板名稱無效');
