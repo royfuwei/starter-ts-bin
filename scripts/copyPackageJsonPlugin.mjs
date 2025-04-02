@@ -20,17 +20,10 @@ const copyPackageJsonFn = async (distDir) => {
 
   // 3) 如果要指定新的 main/module/types
   //    （通常你會在 dist 內成為新的根）
-  pkg.main = 'index.cjs';
-  pkg.module = 'index.mjs';
-  pkg.types = 'index.d.ts';
-  pkg.exports = {
-    '.': {
-      import: './index.mjs',
-      require: './index.cjs',
-      types: './index.d.ts',
-    },
-    './package.json': './package.json',
+  pkg.bin = {
+    [pkg.name]: './bin/index.js',
   };
+  pkg.type = 'module';
 
   // 4) 寫回 distDir 中
   const outPath = path.join(distDir, 'package.json');
@@ -44,7 +37,7 @@ export function copyPackageJsonPlugin(
   },
 ) {
   const { distDir, type } = options;
-  const name = `${type}-copy-package-json-plugin`;
+  const name = type ? `${type}-copy-package-json-plugin` : 'copy-package-json-plugin';
   switch (type) {
     case 'rollup':
       return {
