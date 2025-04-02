@@ -3,7 +3,6 @@ import path from 'path';
 import fs from 'fs';
 
 import typescript from 'rollup-plugin-typescript2';
-import dts from 'rollup-plugin-dts';
 import copy from 'rollup-plugin-copy';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
@@ -12,6 +11,7 @@ import commonjs from '@rollup/plugin-commonjs';
 
 // 自訂 plugin: 負責 package.json 搬移與欄位調整
 import { rollupCopyPackageJsonPlugin } from './scripts/copyPackageJsonPlugin.mjs';
+import { rollupCopyFilesPlugin } from './scripts/copyFilesPlugin.mjs';
 
 const distDir = 'dist';
 const inputFile = 'src/index.ts';
@@ -23,20 +23,16 @@ const externalDeps = [
   ...Object.keys(pkg.peerDependencies || {}),
 ];
 
+const copyFiles = JSON.parse(fs.readFileSync('./copyFiles.json', 'utf-8')) ?? [];
+
 export default [
   // ----- (1) JS 构建：產出 ESM + CJS -----
   {
     input: inputFile,
     output: [
       {
-        file: path.join(distDir, 'index.mjs'),
+        file: path.join(distDir, 'bin/index.js'),
         format: 'esm',
-        sourcemap: false,
-        inlineDynamicImports: true,
-      },
-      {
-        file: path.join(distDir, 'index.cjs'),
-        format: 'cjs',
         sourcemap: false,
         inlineDynamicImports: true,
       },
@@ -63,18 +59,10 @@ export default [
 
       // 我們自訂的 plugin, build 結束後複製/修正 package.json
       rollupCopyPackageJsonPlugin({ distDir }),
+      rollupCopyFilesPlugin({
+        distDir,
+        files: ['LICENSE'].concat(copyFiles),
+      }),
     ],
-  },
-
-  // ----- (2) DTS 构建：合併型別檔為 index.d.ts -----
-  {
-    // input: path.join(distDir, 'types/index.d.ts'),
-    input: path.join('types/index.d.ts'),
-    output: {
-      file: path.join(distDir, 'index.d.ts'),
-      format: 'es',
-    },
-    plugins: [dts()],
-    external: externalDeps,
   },
 ];
