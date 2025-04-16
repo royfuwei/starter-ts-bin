@@ -1,5 +1,6 @@
 # If is CI, skip the commit message hook
-if [ "$CI" = "true" ]; then
+# If is SKIP_PREPARE_COMMIT, skip the commit message hook
+if [ "$CI" = "true" ] || [ "$SKIP_PREPARE_COMMIT" = "true" ]; then
   exit 0
 fi
 
