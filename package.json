@@ -35,7 +35,7 @@
   },
   "lint-staged": {
     "*.ts": [
-      "vitest related --run",
+      "npx vitest related --run",
       "npx prettier --write",
       "npx eslint --fix"
     ]
